@@ -5,10 +5,30 @@
 (defn ok [body]
   { :status 200 :body body })
 
-(defn greeting-for [firstName lastName]
-  (or (empty? firstName) (empty? lastName)
-    "Hello, world! \n"
-    (str "Hello, " firstName lastName "\n")))
+;; (defn greeting-for [firstName lastName]
+;;   (if (and (empty? firstName) (empty? lastName))
+;;     "Hello, world! \n"
+;;     (str "Hello, " firstName " " lastName "!")))
+;;     
+
+;; (defn greeting-for [firstName lastName]
+;;   (cond
+;;     (and (empty? firstName) (empty? lastName)) "Hello, world!"
+;;     (and (empty? firstName) (not (empty? lastName))) (str "Hello, Mr " lastName "!")
+;;     (and (not (empty? firstName)) (empty? lastName)) (str "Hello, " firstName "!")
+;;     ))
+
+(defn greet [firstName lastName]
+  (->>
+   (list "Hello," firstName lastName "!")
+   (map #(str % " "))
+   (reduce str)
+   (.trim)))
+
+(defn yalla
+  ([] "Hello, world!")
+  ([firstName] (str "Hello, " firstName "!"))
+  ([firstName lastName] (greet firstName lastName)))
 
 (defn respond-hello [request]
   { :status 200 :body request })
@@ -16,7 +36,8 @@
 (defn respond-hello-param [request]
   (let [firstName (get-in request [:query-params :firstName])
         lastName (get-in request [:query-params :lastName])
-        resp (greeting-for firstName lastName)]
+        params (filter #(not (nil? %)) (list firstName lastName))
+        resp (eval `(yalla ~@params))]
     (ok resp)))
 
 (def routes
