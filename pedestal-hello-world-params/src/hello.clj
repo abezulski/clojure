@@ -1,6 +1,7 @@
 (ns hello
   (:require [io.pedestal.http :as http]
-            [io.pedestal.http.route :as route]))
+            [io.pedestal.http.route :as route]
+            [clojure.string :as str]))
 
 (defn ok [body]
   { :status 200 :body body })
@@ -23,7 +24,7 @@
    (list "Hello," firstName lastName "!")
    (map #(str % " "))
    (reduce str)
-   (.trim)))
+   (str/trim)))
 
 (defn yalla
   ([] "Hello, world!")
